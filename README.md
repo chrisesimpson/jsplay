@@ -1,0 +1,2 @@
+# jsplay
+Simple javascript playground
