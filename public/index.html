@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Javascript Playground</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" media="screen"/>
+    <style type="text/css">
+      html, body, .container-fluid, .play { height: 100%;}
+      .navbar { position:fixed; top:0px; }
+      .play { top:0px; padding-top: 50px; }
+      html { min-height: 100%; }
+      .codewindow { background-color: #eee; padding:5px; }
+      #code { width:100%; height:100%; padding: 8px; border:none;}
+      .resultwindow { background-color: #eee; padding:5px; }
+      #result { width:100%; height:100%; background-color: #777; padding: 8px; color: white; }
+      .col-sm-8 .col-sm-4 .col-lg-9 col-lg-3 { }
+      .col-xs-12{ }
+      .codewindow,.resultwindow { height: 100%; font-family: Menlo, Monaco, Consolas, "Courier New", monospace;}
+      @media only screen and (max-width: 768px) { .codewindow,.resultwindow { height: 50%; } }
+    </style>
+  </head>
+  <body role="document">
+    <div class="container-fluid">
+      <navbar class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Javascript Playground</a>
+            <a class="navbar-brand" href="#" id="runButton">RUN</a>
+            <a class="navbar-brand" href="#" id="clearButton">CLEAR</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+          </div>
+        </div>
+      </navbar>
+      <div class="row play">
+          <div class="col-sm-6 col-xs-12 codewindow">
+            <textarea id="code">var helloWorld = "Hello World";
+
+helloWorld.Dump();</textarea>
+          </div>
+          <div class="col-sm-6 col-xs-12 resultwindow">
+            <textarea id="result" readonly></textarea>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+
+        $("#code").keydown(function(e) {
+            if(e.keyCode === 9) { // tab was pressed
+                // get caret position/selection
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                var $this = $(this);
+                var value = $this.val();
+
+                // set textarea value to: text before caret + tab + text after caret
+                $this.val(value.substring(0, start)
+                            + "\t"
+                            + value.substring(end));
+
+                // put caret at right position again (add one for the tab)
+                this.selectionStart = this.selectionEnd = start + 1;
+
+                // prevent the focus lose
+                e.preventDefault();
+            }
+        });
+
+        $("#clearButton").click(function() {
+          $("#result").val("");
+        });
+        $("#runButton").click(function() {
+          "use strict";
+          var append = function(text) {
+            if ($("#result").val()) {
+              text = "\n" + text;
+            }
+            $("#result").val($("#result").val() + text);
+          }
+          Object.prototype.Dump = function() {
+            append("[object]");
+          };
+          Array.prototype.Dump = function() { 
+            append("[array]");
+          };
+          String.prototype.Dump = function() { 
+            append(this);
+          };
+          Number.prototype.Dump = function() { 
+            append(this);
+          };
+          Date.prototype.Dump = function() { 
+            append(this);
+          };
+          Function.prototype.Dump = function() { 
+            append(this);
+          };
+          RegExp.prototype.Dump = function() { 
+            append(this);
+          };
+          Boolean.prototype.Dump = function() { 
+            if (this) {
+              append("true");
+              return
+            }
+            append("false");
+          }; 
+          eval($("#code").val());
+        });
+      });    
+    </script>
+  </body>
+</html>
